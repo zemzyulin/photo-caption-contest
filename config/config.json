@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "master",
+    "password": "h@rdest_Pa55",
+    "database": "photo_caption_contest",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "master",
+    "password": "h@rdest_Pa55",
+    "database": "photo_caption_contest",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "master",
+    "password": "h@rdest_Pa55",
+    "database": "photo_caption_contest",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
