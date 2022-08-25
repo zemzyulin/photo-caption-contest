@@ -2,9 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 const controller = require('../controllers/users');
+const auth = require('../middleware/auth');
 
 // get all users
-router.get('/', controller.list);
+router.get('/', auth, controller.list);
 // post new user
 router.post('/', controller.add);
 // get user by id

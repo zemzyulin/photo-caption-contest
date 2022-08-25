@@ -4,20 +4,23 @@
     "password": "h@rdest_Pa55",
     "database": "photo_caption_contest",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "privatekey": "priv@tekey"
   },
   "test": {
     "username": "master",
     "password": "h@rdest_Pa55",
     "database": "photo_caption_contest",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "privatekey": "priv@tekey"
   },
   "production": {
     "username": "master",
     "password": "h@rdest_Pa55",
     "database": "photo_caption_contest",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "privatekey": "priv@tekey"
   }
 }

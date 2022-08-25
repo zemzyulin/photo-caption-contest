@@ -65,6 +65,27 @@ module.exports = {
         } catch(error) {
             return res.status(400).send(error);
         }
+    },
+    async login(req, res) {
+        try {
+            let user = await User.findOne({ where: { username: req.body.username }});
+            // check user
+            if (!user) {
+                return res.status(404).send({ message: 'Incorrect username' });
+            }
+            // check pass
+            if (req.body.password !== user.password) {
+                return res.status(400).send({ message: 'Incorrect password' });
+            }
+            const token = user.generateJWT();
+            return res.header('authorization', token).status(200).send({
+                id: user.id,
+                username: user.username,
+                token: token
+            });
+        } catch(error) {
+            res.status(400).send(error);
+        }
     }
 }
 

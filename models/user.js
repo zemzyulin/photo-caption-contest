@@ -1,4 +1,8 @@
 'use strict';
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config.json')[env];
+const jwt = require('jsonwebtoken');
+
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
@@ -8,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'users_id',
         as: 'captions'
       })
+    }
+
+    generateJWT() {
+      const token = jwt.sign({id: this.id, username: this.username}, config.privatekey);
+      return token;
     }
   }
   User.init({
