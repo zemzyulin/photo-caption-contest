@@ -41,7 +41,12 @@ module.exports = {
     },
     async updateById(req, res) {
         try {
-            let user = await User.findByPk(req.params.id)
+            // check if authorized
+            if (req.params.id !== req.user.id.toString()) {
+                return res.status(403).send({ message: 'You are not authorized to update this user' });
+            }
+            // update user
+            let user = await User.findByPk(req.params.id);
             if (!user) {
                 return res.status(404).send({ message: 'User not found'})
             }
@@ -56,6 +61,11 @@ module.exports = {
     },
     async deleteById(req, res) {
         try {
+            // check if authorized
+            if (req.params.id !== req.user.id.toString()) {
+                return res.status(403).send({ message: 'You are not authorized to delete this user' });
+            }
+            // delete user
             let user = await User.findByPk(req.params.id);
             if (!user) {
                 return res.status(404).send({ message: 'User not found'})

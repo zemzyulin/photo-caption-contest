@@ -18,7 +18,7 @@ module.exports = {
         try {
             let caption = await Caption.create({
                 caption: req.body.caption,
-                users_id: req.body.users_id,
+                users_id: req.user.id,
                 photos_id: req.body.photos_id
             })
             return res.status(201).send(caption);
@@ -51,10 +51,15 @@ module.exports = {
             if (!caption) {
                 return res.status(404).send({ message: 'Caption not found'})
             }
+            console.log(caption.users_id);
+            console.log(req.user.id);
+            // authorize edit
+            if (caption.users_id !== req.user.id) {
+                return res.status(403).send({ message: 'You are not authorized to update this caption' })
+            }
+            // update caption
             await caption.update({
-                caption: req.body.caption || caption.caption,
-                users_id: req.body.users_id || caption.users_id,
-                photos_id: req.body.photos_id || caption.photos_id
+                caption: req.body.caption || caption.caption
             })
             return res.status(200).send(caption)
         } catch(error) {
@@ -67,6 +72,11 @@ module.exports = {
             if (!caption) {
                 return res.status(404).send({ message: 'Caption not found'})
             }
+            // authorize delete
+            if (caption.users_id !== req.user.id) {
+                return res.status(403).send({ message: 'You are not authorized to delete this caption' })
+            }
+            // delete caption
             await caption.destroy();
             return res.status(204).send();
         } catch(error) {
