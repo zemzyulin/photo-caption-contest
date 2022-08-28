@@ -1,5 +1,7 @@
 const User = require('../models').User;
 const Caption = require('../models').Caption;
+const bcrypt = require('bcrypt');
+const saltRounds = 11;
 
 module.exports = {
     async list(req, res) {
@@ -14,11 +16,13 @@ module.exports = {
     },
     async add(req, res) {
         try {
-            let user = await User.create({
-                username: req.body.username,
-                password: req.body.password
+            bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+                let user = await User.create({
+                    username: req.body.username,
+                    password: hash
+                })
+                return res.status(201).send(user);
             })
-            return res.status(201).send(user);
         } catch(error) {
             return res.status(400).send(error);
         }
@@ -45,16 +49,19 @@ module.exports = {
             if (req.params.id !== req.user.id.toString()) {
                 return res.status(403).send({ message: 'You are not authorized to update this user' });
             }
-            // update user
+            // find user
             let user = await User.findByPk(req.params.id);
             if (!user) {
                 return res.status(404).send({ message: 'User not found'})
             }
-            await user.update({
-                username: req.body.username || user.username,
-                password: req.body.password || user.password
+            // update user
+            bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
+                await user.update({
+                    username: req.body.username || user.username,
+                    password: hash || user.password
             })
             return res.status(200).send(user)
+            });
         } catch(error) {
             return res.status(400).send(error);
         }
@@ -84,7 +91,8 @@ module.exports = {
                 return res.status(404).send({ message: 'Incorrect username' });
             }
             // check pass
-            if (req.body.password !== user.password) {
+            let checkPass = await bcrypt.compare(req.body.password, user.password);
+            if (!checkPass) {
                 return res.status(400).send({ message: 'Incorrect password' });
             }
             const token = user.generateJWT();

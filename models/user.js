@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     generateJWT() {
-      const token = jwt.sign({id: this.id, username: this.username}, config.privatekey);
+      const token = jwt.sign({id: this.id, username: this.username}, config.privatekey, { expiresIn: 60 * 1 });
+      console.log(token);
       return token;
     }
   }
@@ -32,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: [7,20]
+        len: [7,255]
       }
     }
   }, {
