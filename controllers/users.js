@@ -3,6 +3,10 @@ const Caption = require('../models').Caption;
 const bcrypt = require('bcrypt');
 const saltRounds = 11;
 
+const CashService = require('./cache');
+const cache = new CashService(3600);
+const KEY = 'users';
+
 module.exports = {
     async list(req, res) {
         try {
@@ -29,14 +33,16 @@ module.exports = {
     },
     async getById(req, res) {
         try {
-            let user = await User.findByPk(req.params.id, {
-                include: [{
-                    model: Caption,
-                    as: 'captions'
-                }]
-            })
+            let user = await cache.get(`${KEY}_${req.params.id}`, () => {
+                return User.findByPk(req.params.id, {
+                    include: [{
+                        model: Caption,
+                        as: 'captions'
+                    }]
+                })
+            });
             if (!user) {
-                return res.status(404).send({ message: 'User not found'})
+                return res.status(404).send({ message: 'User not found' })
             }
             return res.status(200).send(user);
         } catch(error) {
@@ -52,7 +58,7 @@ module.exports = {
             // find user
             let user = await User.findByPk(req.params.id);
             if (!user) {
-                return res.status(404).send({ message: 'User not found'})
+                return res.status(404).send({ message: 'User not found' })
             }
             // update user
             bcrypt.hash(req.body.password, saltRounds, async function(err, hash) {
@@ -60,6 +66,7 @@ module.exports = {
                     username: req.body.username || user.username,
                     password: hash || user.password
             })
+            cache.del(`${KEY}_${req.params.id}`);
             return res.status(200).send(user)
             });
         } catch(error) {
@@ -75,9 +82,10 @@ module.exports = {
             // delete user
             let user = await User.findByPk(req.params.id);
             if (!user) {
-                return res.status(404).send({ message: 'User not found'})
+                return res.status(404).send({ message: 'User not found' })
             }
             await user.destroy();
+            cache.del(`${KEY}_${req.params.id}`);
             return res.status(204).send();
         } catch(error) {
             return res.status(400).send(error);

@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     generateJWT() {
-      const token = jwt.sign({id: this.id, username: this.username}, config.privatekey, { expiresIn: 60 * 1 });
+      const token = jwt.sign({id: this.id, username: this.username}, config.privatekey, { expiresIn: 60 * 60 });
       console.log(token);
       return token;
     }
