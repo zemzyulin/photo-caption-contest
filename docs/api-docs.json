@@ -1,0 +1,898 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "description": "Simple API for posting captions under photos with user authentication and caching",
+        "version": "1.0.0",
+        "title": "Photo Caption Contest",
+        "contact": {
+            "email": "yehor.zemzyulin@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "servers": [{
+        "url": "/"
+    }],
+    "paths" : {
+        "/users" : {
+            "get" : {
+                "description": "Returns all users",
+                "summary": "Retrieve all users",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "users": {
+                                        "value": [{"id":1,"username":"test_user1","password":"p@ssword1","createdAt":"2022-08-29T17:26:58.617Z","updatedAt":"2022-08-29T17:26:58.617Z"},
+                                        {"id":2,"username":"test_user2","password":"p@ssword2","createdAt":"2022-08-29T17:26:58.617Z","updatedAt":"2022-08-29T17:26:58.617Z"}
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Users"]
+            },
+            "post": {
+                "description": "Creates a new user",
+                "summary": "Add user",
+                "requestBody": {
+                    "description": "Username and password for user",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/req_user"
+                            },
+                            "example": {"username":"test_user1","password":"p@ssword1"}
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Returns created user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/user"
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "username": "test_user1",
+                                    "password": "$2b$11$0D.N4H19/A/J0Ru74Rjvtu/y41svmnSBc.7L575HrLKcvHrtMnYJy",
+                                    "updatedAt": "2022-08-30T13:04:05.280Z",
+                                    "createdAt": "2022-08-30T13:04:05.280Z"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Users"]
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Returns user based on ID",
+                "summary": "Find user by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of user",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "description": "User ID",
+                                            "type": "integer"
+                                        },
+                                        "username": {
+                                            "description": "User's name",
+                                            "type": "string"
+                                        },
+                                        "password": {
+                                            "description": "Hashed user's password",
+                                            "type": "string"
+                                        },
+                                        "updatedAt": {
+                                            "description": "Timestamp of last update",
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "description": "Timestamp of creation",
+                                            "type": "string"
+                                        },
+                                        "captions": {
+                                            "description": "List of user's captions",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/caption"
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "username": "test_user1",
+                                    "password": "$2b$11$0D.N4H19/A/J0Ru74Rjvtu/y41svmnSBc.7L575HrLKcvHrtMnYJy",
+                                    "updatedAt": "2022-08-30T13:04:05.280Z",
+                                    "createdAt": "2022-08-30T13:04:05.280Z",
+                                    "captions": [{
+                                        "id": 5,
+                                        "caption": "caption under photo test 5",
+                                        "users_id": 1,
+                                        "photos_id": 1,
+                                        "createdAt": "2022-08-29T17:32:40.600Z",
+                                        "updatedAt": "2022-08-29T17:44:15.083Z"
+                                    }]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Users"]
+            },
+            "put": {
+                "description": "Updates user based on ID",
+                "summary": "Update user by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of user",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "requestBody": {
+                    "description": "Username or password, or both",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/req_user"
+                            },
+                            "example": {"username":"test_user1","password":"p@ssword1"}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/user"
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "username": "test_user1",
+                                    "password": "$2b$11$0D.N4H19/A/J0Ru74Rjvtu/y41svmnSBc.7L575HrLKcvHrtMnYJy",
+                                    "updatedAt": "2022-08-30T13:04:05.280Z",
+                                    "createdAt": "2022-08-30T13:04:05.280Z"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Users"]
+            },
+            "delete": {
+                "description": "Deletes user based on ID",
+                "summary": "Delete user by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of user",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "responses": {
+                    "204": {
+                        "description": "User deleted"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Users"]
+            }
+        },
+        "/users/login": {
+            "post": {
+                "description": "Authenticate user",
+                "summary": "Authenticates user and responds with JWT in header",
+                "requestBody": {
+                    "description": "Username and password",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/req_user"
+                            },
+                            "example": {"username":"test_user1","password":"p@ssword1"}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "description": "User ID",
+                                            "type": "integer"
+                                        },
+                                        "username": {
+                                            "description": "User's name",
+                                            "type": "string"
+                                        },
+                                        "token": {
+                                            "description": "JWT assigned to user",
+                                            "type": "string"
+                                        }
+                                    } 
+                                },
+                                "headers": {
+                                    "authorization": {
+                                        "description": "JWT assigned to user",
+                                        "schema": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "username": "test_user1",
+                                    "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJ0ZXN0X3VzZXJfOCIsImlhdCI6MTY2MTg1MzQ3OCwiZXhwIjoxNjYxODU3MDc4fQ.-XKL1ZlQHpmUH2egBSPYFmX9TvcFwS2dTiUjiJIM5UE"    
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Incorrect password"
+                    },
+                    "404": {
+                        "description": "Incorrect username"
+                    }
+                },
+                "tags": ["User Login"]
+            }
+        },
+        "/photos" : {
+            "get" : {
+                "description": "Returns all photos",
+                "summary": "Retrieve all photos",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "photos": {
+                                        "value": [{"id":1,"url":"/images/llama.jpg","description":"description sample1","createdAt":"2022-08-29T17:26:58.617Z","updatedAt":"2022-08-29T17:26:58.617Z"},
+                                        {"id":2,"url":"/images/puppy.jpg","description":"description sample2","createdAt":"2022-08-29T17:26:58.617Z","updatedAt":"2022-08-29T17:26:58.617Z"}
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Photos"]
+            },
+            "post": {
+                "description": "Creates a new photo",
+                "summary": "Add photo",
+                "requestBody": {
+                    "description": "URL and description",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/req_photo"
+                            },
+                            "example": {"url":"/images/llama.jpg","description":"description sample1"}
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Returns created photo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/photo"
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "url": "/images/llama.jpg",
+                                    "description": "description sample1",
+                                    "updatedAt": "2022-08-30T13:04:05.280Z",
+                                    "createdAt": "2022-08-30T13:04:05.280Z"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Photos"]
+            }
+        },
+        "/photos/{id}": {
+            "get": {
+                "description": "Returns photo based on ID",
+                "summary": "Find photo by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of photo",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "description": "Photo ID",
+                                            "type": "integer"
+                                        },
+                                        "url": {
+                                            "description": "URL of photo in database",
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "description": "Description for photo",
+                                            "type": "string"
+                                        },
+                                        "updatedAt": {
+                                            "description": "Timestamp of last update",
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "description": "Timestamp of creation",
+                                            "type": "string"
+                                        },
+                                        "captions": {
+                                            "description": "List of photo's captions",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/caption"
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "url": "/images/llama.jpg",
+                                    "description": "description sample1",
+                                    "updatedAt": "2022-08-30T13:04:05.280Z",
+                                    "createdAt": "2022-08-30T13:04:05.280Z",
+                                    "captions": [{
+                                        "id": 5,
+                                        "caption": "caption under photo test 5",
+                                        "users_id": 1,
+                                        "photos_id": 1,
+                                        "createdAt": "2022-08-29T17:32:40.600Z",
+                                        "updatedAt": "2022-08-29T17:44:15.083Z"
+                                    }]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Photo not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Photos"]
+            },
+            "put": {
+                "description": "Updates photo based on ID",
+                "summary": "Update photo by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of photo",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "requestBody": {
+                    "description": "URL or description, or both",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/req_photo"
+                            },
+                            "example": {"url":"/images/llama.jpg","description":"description sample1"}
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/photo"
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "url": "/images/llama.jpg",
+                                    "description": "description sample1",
+                                    "updatedAt": "2022-08-30T13:04:05.280Z",
+                                    "createdAt": "2022-08-30T13:04:05.280Z"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Photo not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Photos"]
+            },
+            "delete": {
+                "description": "Deletes photo based on ID",
+                "summary": "Delete photo by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of photo",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "responses": {
+                    "204": {
+                        "description": "Photo deleted"
+                    },
+                    "404": {
+                        "description": "Photo not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Photos"]
+            }
+        },
+
+
+
+
+
+
+
+
+        "/captions" : {
+            "get" : {
+                "description": "Returns all captions",
+                "summary": "Retrieve all captions",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "captions": {
+                                        "value": [{"id":1,"caption":"caption under photo sample1","description":"description sample1","users_id":1,"photos_id":1,"createdAt":"2022-08-29T17:26:58.617Z","updatedAt":"2022-08-29T17:26:58.617Z"},
+                                        {"id":2,"caption":"caption under photo sample2","description":"description sample2","users_id":2,"photos_id":1,"createdAt":"2022-08-29T17:26:58.617Z","updatedAt":"2022-08-29T17:26:58.617Z"}
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Captions"]
+            },
+            "post": {
+                "description": "Creates a new caption",
+                "summary": "Add caption",
+                "requestBody": {
+                    "description": "Caption and photoID",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/req_caption"
+                            },
+                            "example": { "caption": "caption under photo sample", "photos_id": 1 }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Returns created caption",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/caption"
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "caption": "caption under photo sample",
+                                    "users_id": 1,
+                                    "photos_id": 1,
+                                    "updatedAt": "2022-08-30T13:04:05.280Z",
+                                    "createdAt": "2022-08-30T13:04:05.280Z"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Captions"]
+            }
+        },
+        "/captions/{id}": {
+            "get": {
+                "description": "Returns caption based on ID",
+                "summary": "Find caption by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of caption",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "description": "Caption ID",
+                                            "type": "integer"
+                                        },
+                                        "caption": {
+                                            "description": "Caption under photo",
+                                            "type": "string"
+                                        },
+                                        "users_id": {
+                                            "description": "ID of user that created caption",
+                                            "type": "string"
+                                        },
+                                        "photos_id": {
+                                            "description": "ID of photo under which caption was created",
+                                            "type": "string"
+                                        },
+                                        "updatedAt": {
+                                            "description": "Timestamp of last update",
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "description": "Timestamp of creation",
+                                            "type": "string"
+                                        },
+                                        "photo": {
+                                            "description": "Data on photo under which caption was created",
+                                            "type": "object",
+                                            "items": {
+                                                "$ref": "#/components/photo"
+                                            }
+                                        },
+                                        "user": {
+                                            "description": "Data on user that created caption",
+                                            "type": "object",
+                                            "items": {
+                                                "$ref": "#/components/user"
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "caption": "caption under photo",
+                                    "users_id": 1,
+                                    "photos_id": 2,
+                                    "createdAt": "2022-08-19T11:30:18.085Z",
+                                    "updatedAt": "2022-08-19T11:30:18.085Z",
+                                    "photo": {
+                                        "id": 2,
+                                        "url": "/images/llama.jpg",
+                                        "description": "sample photo description",
+                                        "createdAt": "2022-08-19T11:29:49.679Z",
+                                        "updatedAt": "2022-08-26T08:57:34.934Z"
+                                    },
+                                    "user": {
+                                        "id": 1,
+                                        "username": "username1",
+                                        "password": "password2",
+                                        "createdAt": "2022-08-19T11:29:07.161Z",
+                                        "updatedAt": "2022-08-19T11:29:07.161Z"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Caption not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Captions"]
+            },
+            "put": {
+                "description": "Updates caption based on ID",
+                "summary": "Update caption by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of caption",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "requestBody": {
+                    "description": "Caption and/or photoID",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/req_caption"
+                            },
+                            "example": { "caption": "caption under photo sample", "photos_id": 1 }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/caption"
+                                },
+                                "example": {
+                                    "id": 1,
+                                    "caption": "caption under photo sample",
+                                    "users_id": 1,
+                                    "photos_id": 2,
+                                    "updatedAt": "2022-08-30T13:04:05.280Z",
+                                    "createdAt": "2022-08-30T13:04:05.280Z"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Caption not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Captions"]
+            },
+            "delete": {
+                "description": "Deletes caption based on ID",
+                "summary": "Delete caption by ID",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "description": "ID of caption",
+                    "required": true,
+                    "schema": {
+                        "type": "integer"
+                    },
+                    "example": 1
+                }],
+                "responses": {
+                    "204": {
+                        "description": "Caption deleted"
+                    },
+                    "404": {
+                        "description": "Caption not found"
+                    },
+                    "400": {
+                        "description": "Error"
+                    }
+                },
+                "tags": ["Captions"]
+            }
+        }
+    },
+    "components": {
+        "req_user": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "description": "Username",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password",
+                    "type": "string"
+                }
+            }
+        },
+        "user": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "User ID",
+                    "type": "integer"
+                },
+                "username": {
+                    "description": "User's name",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Hashed user's password",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "Timestamp of last update",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "Timestamp of creation",
+                    "type": "string"
+                }
+            }
+        },
+        "req_photo": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "description": "URL of photo in database",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description for photo",
+                    "type": "string"
+                }
+            }
+        },
+        "photo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Photo ID",
+                    "type": "integer"
+                },
+                "url": {
+                    "description": "URL of photo in database",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description for photo",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "Timestamp of last update",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "Timestamp of creation",
+                    "type": "string"
+                }
+            }
+        },
+        "req_caption": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "description": "Caption for a photo",
+                    "type": "string"
+                },
+                "photos_id": {
+                    "description": "ID of photo",
+                    "type": "integer"
+                }
+            }
+        },
+        "caption": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "Caption ID",
+                    "type": "integer"
+                },
+                "caption": {
+                    "description": "Caption under photo",
+                    "type": "string"
+                },
+                "users_id": {
+                    "description": "ID of user that created caption",
+                    "type": "string"
+                },
+                "photos_id": {
+                    "description": "ID of photo under which caption was created",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "Timestamp of last update",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "Timestamp of creation",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
