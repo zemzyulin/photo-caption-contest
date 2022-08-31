@@ -10,7 +10,7 @@ router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {customCss
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Photo Caption Contest' });
 });
 
 module.exports = router;

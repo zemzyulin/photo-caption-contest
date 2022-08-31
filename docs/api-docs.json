@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.1",
     "info": {
-        "description": "Simple API for posting captions under photos with user authentication and caching",
+        "description": "Simple API for posting captions under photos with user authentication (JWT) and caching",
         "version": "1.0.0",
         "title": "Photo Caption Contest",
         "contact": {
@@ -171,6 +171,13 @@
                         "type": "integer"
                     },
                     "example": 1
+                }, {
+                    "name": "authorization",
+                    "in": "header",
+                    "description": "Authorize user via '/users/login' to obtain authorization token",
+                    "required": true,
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJ0ZXN0X3VzZXJfOCIsImlhdCI6MTY2MTg1MzQ3OCwiZXhwIjoxNjYxODU3MDc4fQ.-XKL1ZlQHpmUH2egBSPYFmX9TvcFwS2dTiUjiJIM5UE"
                 }],
                 "requestBody": {
                     "description": "Username or password, or both",
@@ -209,6 +216,11 @@
                         "description": "Error"
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": ["Users"]
             },
             "delete": {
@@ -235,6 +247,11 @@
                         "description": "Error"
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": ["Users"]
             }
         },
@@ -524,14 +541,6 @@
                 "tags": ["Photos"]
             }
         },
-
-
-
-
-
-
-
-
         "/captions" : {
             "get" : {
                 "description": "Returns all captions",
@@ -595,6 +604,11 @@
                         "description": "Error"
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": ["Captions"]
             }
         },
@@ -745,6 +759,11 @@
                         "description": "Error"
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": ["Captions"]
             },
             "delete": {
@@ -771,6 +790,11 @@
                         "description": "Error"
                     }
                 },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "tags": ["Captions"]
             }
         }
@@ -892,6 +916,13 @@
                     "description": "Timestamp of creation",
                     "type": "string"
                 }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
         }
     }

@@ -5,10 +5,10 @@ const jwt = require('jsonwebtoken');
 module.exports = function(req, res, next) {
     const token = req.headers['authorization'];
     if (!token) {
-        return res.status(401).send({ message: 'Access denied. Token not provided.'})
+        return res.status(401).send({ message: 'Access denied. Token not provided.' })
     }
     try {
-        req.user = jwt.verify(token, config.privatekey);
+        req.user = jwt.verify(token.slice(7), config.privatekey);
         next();
     } catch(error) {
         res.status(400).send('Invalid token.');
