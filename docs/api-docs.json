@@ -235,6 +235,13 @@
                         "type": "integer"
                     },
                     "example": 1
+                }, {
+                    "name": "authorization",
+                    "in": "header",
+                    "description": "Authorize user via '/users/login' to obtain authorization token",
+                    "required": true,
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJ0ZXN0X3VzZXJfOCIsImlhdCI6MTY2MTg1MzQ3OCwiZXhwIjoxNjYxODU3MDc4fQ.-XKL1ZlQHpmUH2egBSPYFmX9TvcFwS2dTiUjiJIM5UE"
                 }],
                 "responses": {
                     "204": {
@@ -569,6 +576,14 @@
             "post": {
                 "description": "Creates a new caption",
                 "summary": "Add caption",
+                "parameters": [{
+                    "name": "authorization",
+                    "in": "header",
+                    "description": "Authorize user via '/users/login' to obtain authorization token",
+                    "required": true,
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJ0ZXN0X3VzZXJfOCIsImlhdCI6MTY2MTg1MzQ3OCwiZXhwIjoxNjYxODU3MDc4fQ.-XKL1ZlQHpmUH2egBSPYFmX9TvcFwS2dTiUjiJIM5UE"
+                }],
                 "requestBody": {
                     "description": "Caption and photoID",
                     "required": true,
@@ -720,6 +735,13 @@
                         "type": "integer"
                     },
                     "example": 1
+                }, {
+                    "name": "authorization",
+                    "in": "header",
+                    "description": "Authorize user via '/users/login' to obtain authorization token",
+                    "required": true,
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJ0ZXN0X3VzZXJfOCIsImlhdCI6MTY2MTg1MzQ3OCwiZXhwIjoxNjYxODU3MDc4fQ.-XKL1ZlQHpmUH2egBSPYFmX9TvcFwS2dTiUjiJIM5UE"
                 }],
                 "requestBody": {
                     "description": "Caption and/or photoID",
@@ -778,6 +800,13 @@
                         "type": "integer"
                     },
                     "example": 1
+                }, {
+                    "name": "authorization",
+                    "in": "header",
+                    "description": "Authorize user via '/users/login' to obtain authorization token",
+                    "required": true,
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJ0ZXN0X3VzZXJfOCIsImlhdCI6MTY2MTg1MzQ3OCwiZXhwIjoxNjYxODU3MDc4fQ.-XKL1ZlQHpmUH2egBSPYFmX9TvcFwS2dTiUjiJIM5UE"
                 }],
                 "responses": {
                     "204": {
