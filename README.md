@@ -22,11 +22,11 @@ __User can:__
 6. Available on the web via Heroku
 
 __How to use on web__
-https://photo-caption-contest-yz.herokuapp.com/
+https://photo-caption-contest-yz.herokuapp.com/  
 __Swagger documentation on web__
 https://photo-caption-contest-yz.herokuapp.com/docs/
 
-__Technology:__ JavaScript, Node.js, Express, PostgreSQL, Sequelize, JWT, Node-Cache, Heroku
+<ins>__Technology:__ JavaScript, Node.js, Express, PostgreSQL, Sequelize, JWT, Node-Cache, Heroku</ins>
 <br>
 <br>
 

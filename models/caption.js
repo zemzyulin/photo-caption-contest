@@ -6,19 +6,19 @@ module.exports = (sequelize, DataTypes) => {
   class Caption extends Model {
     static associate(models) {
       Caption.belongsTo(models.Photo, {
-        foreignKey: 'photos_id',
+        foreignKey: 'photosId',
         as: 'photo'
       });
       Caption.belongsTo(models.User, {
-        foreignKey: 'users_id',
+        foreignKey: 'usersId',
         as: 'user'
       });
     }
   }
   Caption.init({
-    caption: DataTypes.STRING,
-    users_id: DataTypes.INTEGER,
-    photos_id: DataTypes.INTEGER
+    content: DataTypes.STRING,
+    usersId: DataTypes.INTEGER,
+    photosId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Caption',

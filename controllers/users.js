@@ -11,7 +11,8 @@ module.exports = {
     async list(req, res) {
         try {
             let users = await User.findAll({
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
+                attributes: { exclude: ['password'] }
             });
             return res.status(200).send(users);
         } catch {error} {
@@ -25,7 +26,12 @@ module.exports = {
                     username: req.body.username,
                     password: hash
                 })
-                return res.status(201).send(user);
+                return res.status(201).send({
+                    id: user.id,
+                    username: user.username,
+                    updatedAt: user.updatedAt,
+                    createdAt: user.createdAt
+                });
             })
         } catch(error) {
             return res.status(400).send(error);
@@ -38,7 +44,8 @@ module.exports = {
                     include: [{
                         model: Caption,
                         as: 'captions'
-                    }]
+                    }],
+                    attributes: { exclude: ['password'] }
                 })
             });
             if (!user) {
@@ -65,9 +72,14 @@ module.exports = {
                 await user.update({
                     username: req.body.username || user.username,
                     password: hash || user.password
-            })
-            cache.del(`${KEY}_${req.params.id}`);
-            return res.status(200).send(user)
+                })
+                cache.del(`${KEY}_${req.params.id}`);
+                return res.status(200).send({
+                    id: user.id,
+                    username: user.username,
+                    updatedAt: user.updatedAt,
+                    createdAt: user.createdAt
+                });
             });
         } catch(error) {
             return res.status(400).send(error);

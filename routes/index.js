@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const userController = require('../controllers/users');
 
 // Setting up swagger documentation
 const fs = require('fs');
@@ -12,5 +13,8 @@ router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {customCss
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Photo Caption Contest' });
 });
+
+// login user
+router.post('/login', userController.login);
 
 module.exports = router;

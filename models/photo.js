@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   class Photo extends Model {
     static associate(models) {
       Photo.hasMany(models.Caption, {
-        foreignKey: 'photos_id',
+        foreignKey: 'photosId',
         as: 'captions'
       })
     }
